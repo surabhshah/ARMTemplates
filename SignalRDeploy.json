@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string"
+    },
+    "skuName": {
+      "type": "string",
+      "allowedValues": [
+        "Free_DS2",
+        "Basic_DS2"
+      ]
+    },
+    "tier": {
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Basic",
+        "Premium"
+      ]
+    },
+    "capacity": {
+      "type": "int"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.SignalRService/SignalR",
+      "name": "[parameters('name')]",
+      "apiVersion": "2018-03-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "domainLabel": "[parameters('name')]"
+      },
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "tier": "[parameters('tier')]",
+        "capacity": "[parameters('capacity')]"
+      }
+    }
+  ],
+  "outputs": {
+    "SignalRAccessKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('name')), providers('Microsoft.SignalRService','SignalR').apiVersions[0]).primaryKey]"
+    }
+  }
+}
